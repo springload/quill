@@ -23,12 +23,32 @@ class Editor extends Parchment.Container {
     });
   }
 
+  applyAttributes(index, length, attr) {
+    Object.keys(attr).forEach(function (key) {
+      let obj = attr[key];
+      let attributor = Parchment.match(key, Parchment.Type.ATTRIBUTE);
+
+      // Only attempt formatting if a valid attributor was found
+      if (attributor) {
+        this.formatAt(index, length, key, obj)
+      }
+    }, this)
+  }
+
   applyDelta(delta) {
     delta.ops.reduce((index, op) => {
       if (op.insert != null) {
         if (typeof op.insert === 'string') {
+          let length = op.insert.length;
+          let attr = op.attributes;
+
           this.insertAt(index, op.insert);
-          return index + op.insert.length;
+
+          if (typeof attr === 'object') {
+            this.applyAttributes(index, length, attr);
+          }
+
+          return index + length;
         } else {
           this.insertAt(index, op.attributes);
           return index + 1;
