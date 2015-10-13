@@ -216,13 +216,17 @@ class Quill extends EventEmitter {
   }
 
   insertText(index, text, name, value, source) {
-    let formats;
-    [index, , formats, source] = this._buildParams(index, 0, name, value, source);
-    this._track(source, () => {
+    let start;
+    let end;
+    let formats
+    let src;
+
+    [start, end, formats, src] = this._buildParams(index, 0, name, value, source);
+    this._track(src, () => {
       this.editor.insertAt(index, text);
       Object.keys(formats).forEach(function(format) {
         this.editor.formatAt(start, text.length, format, formats[format]);
-      });
+      }, this);
     });
   }
 

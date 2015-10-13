@@ -70,6 +70,10 @@ class Block extends Parchment.Block {
   }
 
   insertAt(index, value, def) {
+    if (typeof value === 'object') {
+      value = value.insert;
+    }
+
     if (def != null) return super.insertAt(index, value, def);
     if (value.length === 0) return;
     let lines = value.split('\n');
