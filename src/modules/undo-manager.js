@@ -83,6 +83,13 @@ class UndoManager {
   undo() {
     this.change('undo', 'redo');
   }
+
+  destroy() {
+    this.quill.removeAllListeners(Quill.events.TEXT_CHANGE);
+    this.quill = null;
+    this.stack = null;
+  }
+
 }
 UndoManager.DEFAULTS = {
   delay: 1000,

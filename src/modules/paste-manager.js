@@ -12,7 +12,8 @@ class PasteManager {
     this.container = this.quill.addContainer('ql-paste-manager');
     this.container.setAttribute('contenteditable', true);
     this.container.setAttribute('tabindex', '-1');
-    this.quill.root.addEventListener('paste', this.onPaste.bind(this));
+    this.onPaste = this.onPaste.bind(this);
+    this.quill.root.addEventListener('paste', this.onPaste);
   }
 
   onPaste() {
@@ -36,6 +37,12 @@ class PasteManager {
       this.quill.scrollIntoView();
       this.container.innerHTML = "";
     }, 0);
+  }
+
+  destroy() {
+    this.quill.root.removeEventListener('paste', this.onPaste);
+    this.quill = null;
+    this.container = null;
   }
 }
 PasteManager.DEFAULTS = {

@@ -31,11 +31,14 @@ class Selection {
     this.doc = doc;
     this.root = this.doc.domNode;
     this.lastRange = this.savedRange = new Range(0, 0);
+    this.wrappedUpdate = this.wrappedUpdate.bind(this);
     ['keyup', 'mouseup', 'mouseleave', 'touchend', 'touchleave'].forEach((eventName) => {
-      this.root.addEventListener(eventName, () => {
-        this.update();  // Do not pass event handler params
-      });
-    });
+      this.root.addEventListener(eventName, this.wrappedUpdate);
+    }, this);
+    this.update();
+  }
+
+  wrappedUpdate() {
     this.update();
   }
 
@@ -129,12 +132,12 @@ class Selection {
     let pos = this.doc.findPath(range.start).pop();
     let target = pos.blot.split(pos.offset);
     let cursor = Parchment.create('cursor');
-    
+
     if (target) {
       target.parent.insertBefore(cursor, target);
       cursor.format(format, value);
     }
-    
+
     // Cursor will not blink if we make selection
     this.setNativeRange(cursor.domNode.firstChild, 1);
   }
@@ -221,6 +224,14 @@ class Selection {
       this.onUpdate(this.lastRange, ...args);
     }
   }
+
+  destroy() {
+    ['keyup', 'mouseup', 'mouseleave', 'touchend', 'touchleave'].forEach((eventName) => {
+      this.root.removeEventListener(eventName, this.wrappedUpdate);
+    }, this);
+    this.doc = null;
+  }
+
 }
 Selection.Range = Range;
 

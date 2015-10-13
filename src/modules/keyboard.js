@@ -11,18 +11,21 @@ class Keyboard {
   constructor(quill, options = {}) {
     this.quill = quill;
     this.hotkeys = {};
-    this.quill.root.addEventListener('keydown', (evt) => {
-      let which = evt.which || evt.keyCode;
-      let range = this.quill.getSelection();
-      let prevent = (this.hotkeys[which] || []).reduce(function(prevent, hotkey) {
-        let [key, callback] = hotkey;
-        if (!match(evt, key)) return prevent;
-        return callback(range, key, evt) || prevent;
-      }, false);
-      if (prevent) {
-        return evt.preventDefault();
-      }
-    });
+    this.onKeyDown = this.onKeyDown.bind(this);
+    this.quill.root.addEventListener('keydown', this.onKeyDown);
+  }
+
+  onKeyDown(evt) {
+    let which = evt.which || evt.keyCode;
+    let range = this.quill.getSelection();
+    let prevent = (this.hotkeys[which] || []).reduce(function(prevent, hotkey) {
+      let [key, callback] = hotkey;
+      if (!match(evt, key)) return prevent;
+      return callback(range, key, evt) || prevent;
+    }, false);
+    if (prevent) {
+      return evt.preventDefault();
+    }
   }
 
   addHotkey(hotkeys, callback) {
@@ -56,6 +59,11 @@ class Keyboard {
       }
       return removed;
     });
+  }
+
+  destroy() {
+    this.quill.root.removeEventListener('keydown', this.onKeyDown);
+    this.quill = null;
   }
 }
 

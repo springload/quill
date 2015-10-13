@@ -288,6 +288,41 @@ class Quill extends EventEmitter {
     });
   }
 
+  destroy() {
+    let html = this.getHTML();
+    let contents = this.getContents();
+
+    this.editor.quill = null;
+    this.editor.onUpdate = null;
+    this.selection.destroy();
+    this.selection = null;
+    this.editor.observer.disconnect();
+    this.editor.observer = null;
+    this.editor.remove();
+    this.editor.domNode = null;
+    this.editor = null;
+    this.selection = null;
+
+    Object.keys(this.modules).forEach(key => {
+      var obj = this.modules[key];
+
+      if (obj.destroy && typeof obj.destroy === 'function') {
+        obj.destroy();
+      }
+
+      obj = null;
+    });
+
+    // this.modules = null;
+    this.theme = null;
+    this.container = null;
+    this.root = null;
+
+    return {
+      html,
+      contents
+    }
+  }
 
   _buildParams(start, end, name, value, source) {
     let formats = {};
@@ -370,7 +405,7 @@ function uniqueId(prefix) {
 
 
 Quill.registerTheme('base', BaseTheme);
-Quill.registerTheme('snow', SnowTheme);
+// Quill.registerTheme('snow', SnowTheme);
 
 
 export { Quill as default };
