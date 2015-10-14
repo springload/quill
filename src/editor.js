@@ -130,7 +130,6 @@ class Editor extends Parchment.Container {
     this.build();
     this.delta = this.getDelta();
     let change = oldDelta.diff(this.delta);
-    console.log(change);
     if (change.length() > 0) {
       this.onUpdate(change, ...args);
     }
