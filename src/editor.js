@@ -40,13 +40,15 @@ class Editor extends Parchment.Container {
       if (op.insert != null) {
         if (typeof op.insert === 'string') {
           let length = op.insert.length;
-          let attr = op.attributes;
 
           this.insertAt(index, op.insert);
 
-          if (typeof attr === 'object') {
-            this.applyAttributes(index, length, attr);
-          }
+          // this causes weird errors, not setting the spans correctly
+          // therefore another delta.ops.reduce further down...
+          //let attr = op.attributes;
+          //if (typeof attr === 'object') {
+          //  this.applyAttributes(index, length, attr);
+          //}
 
           return index + length;
         } else {
@@ -60,6 +62,26 @@ class Editor extends Parchment.Container {
         Object.keys(op.attributes || {}).forEach((name) => {
           this.formatAt(index, op.retain, name, op.attributes[name]);
         });
+        return index + op.retain;
+      }
+    }, 0);
+
+    // now apply styles. there must be more elegant solution for this?
+    delta.ops.reduce((index, op) => {
+      if (op.insert != null) {
+        if (typeof op.insert === 'string') {
+          let length = op.insert.length;
+          let attr = op.attributes;
+          if (typeof attr === 'object') {
+            this.applyAttributes(index, length, attr);
+          }
+          return index + length;
+        } else {
+          return index + 1;
+        }
+      } else if (typeof op.delete === 'number') {
+        return index;
+      } else if (typeof op.retain === 'number') {
         return index + op.retain;
       }
     }, 0);
@@ -127,7 +149,9 @@ class Editor extends Parchment.Container {
     if (mutations.length === 0) return new Delta();
     let oldDelta = this.delta;
     // TODO optimize
-    this.build();
+    // this causes FF to position cursor incorrectly
+    // everything else seems to be working ok without it
+    // this.build();
     this.delta = this.getDelta();
     let change = oldDelta.diff(this.delta);
     if (change.length() > 0) {
