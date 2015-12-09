@@ -149,9 +149,18 @@ class Editor extends Parchment.Container {
     if (mutations.length === 0) return new Delta();
     let oldDelta = this.delta;
     // TODO optimize
-    // this causes FF to position cursor incorrectly
-    // everything else seems to be working ok without it
-    // this.build();
+    
+    // FF positions the cursor incorrectly to the beginning of the editor when editing a paragraph
+    // a workaround is to compare the current focus of the editor to the one after building
+    const currentFocus = document.getSelection().focusNode;
+
+    this.build();
+
+    if(currentFocus != document.getSelection().focusNode && currentFocus) {
+      var range = document.createRange();
+      range.setStartAfter(currentFocus.parentNode);
+    }
+
     this.delta = this.getDelta();
     let change = oldDelta.diff(this.delta);
     if (change.length() > 0) {
