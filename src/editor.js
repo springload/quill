@@ -150,15 +150,20 @@ class Editor extends Parchment.Container {
     let oldDelta = this.delta;
     // TODO optimize
     
-    // FF positions the cursor incorrectly to the beginning of the editor when editing a paragraph
+    // FF and IE position the cursor incorrectly to the beginning of the editor when editing a paragraph
     // a workaround is to compare the current focus of the editor to the one after building
-    const currentFocus = document.getSelection().focusNode;
+    var sel = document.getSelection();
+    var currentFocus = sel.focusNode;
+    var focusOffset = sel.focusOffset;
 
     this.build();
 
-    if(currentFocus != document.getSelection().focusNode && currentFocus) {
+    if(currentFocus && currentFocus != document.getSelection().focusNode) {
+     // now set the old cursor position again
       var range = document.createRange();
-      range.setStartAfter(currentFocus.parentNode);
+      sel.removeAllRanges();
+      range.setStart(currentFocus, focusOffset);
+      sel.addRange(range);
     }
 
     this.delta = this.getDelta();
