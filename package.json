@@ -12,9 +12,7 @@
     "clone": "~1.0.2",
     "deep-equal": "~1.0.1",
     "eventemitter3": "~1.1.1",
-    "extend": "~3.0.0",
-    "parchment": "~0.0.5",
-    "rich-text": "~2.1.0"
+    "extend": "~3.0.0"
   },
   "devDependencies": {
     "async": "^1.4.2",
@@ -51,6 +49,10 @@
     "vinyl-source-stream": "^1.1.0",
     "webpack": "^1.12.2",
     "webpack-dev-server": "^1.12.0"
+  },
+  "peerDependencies": {
+    "parchment": "github:springload/parchment#v0.0.5-dist/key-exists",
+    "rich-text": "~2.1.0"
   },
   "engines": {
     "node": ">=0.12"
