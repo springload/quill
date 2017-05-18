@@ -1,5 +1,5 @@
 var buffer = require('vinyl-buffer');
-var connect = require('gulp-connect');
+// var connect = require('gulp-connect');
 var del = require('del');
 var flatten = require('gulp-flatten');
 var pkg = require('../package.json');
@@ -49,29 +49,29 @@ module.exports = function(config) {
       .pipe(stylus({ 'url': 'url' }))
       .pipe(rename({ prefix: 'quill.' }))
       .pipe(flatten())
-      .pipe(gulp.dest('.build/quill/'))
-      .pipe(connect.reload());
+      .pipe(gulp.dest('.build/quill/'));
+      // .pipe(connect.reload());
   });
 
 
   gulp.task('examples:styles', function() {
     return gulp.src('examples/styles/*.styl')
       .pipe(stylus())
-      .pipe(gulp.dest('.build/quill/examples/styles/'))
-      .pipe(connect.reload());
+      .pipe(gulp.dest('.build/quill/examples/styles/'));
+      // .pipe(connect.reload());
   });
 
   gulp.task('examples:html', function() {
     return gulp.src('examples/*.jade')
       .pipe(jade({ pretty: true }))
-      .pipe(gulp.dest('.build/quill/examples/'))
-      .pipe(connect.reload());
+      .pipe(gulp.dest('.build/quill/examples/'));
+      // .pipe(connect.reload());
   });
 
   gulp.task('examples:scripts', function() {
     return gulp.src('examples/scripts/*.js')
-      .pipe(gulp.dest('.build/quill/examples/scripts/'))
-      .pipe(connect.reload());
+      .pipe(gulp.dest('.build/quill/examples/scripts/'));
+      // .pipe(connect.reload());
   });
 
 

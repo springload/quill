@@ -1,6 +1,6 @@
 var _ = require('lodash');
 var browsers = require('./browsers');
-var connect = require('gulp-connect');
+// var connect = require('gulp-connect');
 var gulp = require('gulp');
 var karma = require('karma');
 var sauce = require('./sauce');
